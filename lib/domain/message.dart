@@ -26,7 +26,7 @@ class Message {
   void validateBody() {
     if (body.length > 500) {
       throw Exception(
-          "O tamanho do corpo da mensagem não pode ser maior que 1000 caracteres.");
+          "O tamanho do corpo da mensagem não pode ser maior que 500 caracteres.");
     }
   }
 }
