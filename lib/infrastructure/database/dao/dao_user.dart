@@ -3,7 +3,7 @@ import 'package:agenda_compartilhada/infrastructure/database/helper/connection.d
 import 'package:sqflite/sqflite.dart';
 import 'package:agenda_compartilhada/domain/dto/dto_user.dart';
 
-class DAOUser implements IDaoUser {
+class DAOUser implements IDAOUser {
   late Database _db;
 
   final sqlInserir = '''

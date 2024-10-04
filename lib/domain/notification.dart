@@ -1,10 +1,17 @@
+import 'package:agenda_compartilhada/domain/user.dart';
+
 class Notification {
   dynamic? id;
   String type;
   String title;
   String content;
+  int idUser;
 
-  Notification(this.type, this.title, this.content) {
+  Notification(
+      {required this.type,
+      required this.title,
+      required this.content,
+      required this.idUser}) {
     validateFields();
   }
 

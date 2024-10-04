@@ -5,8 +5,15 @@ class Message {
   String type;
   String body;
   bool read;
+  int idUser;
+  int idEvent;
 
-  Message({required this.type, required this.body, required this.read}) {
+  Message(
+      {required this.type,
+      required this.body,
+      required this.read,
+      required this.idUser,
+      required this.idEvent}) {
     validateFields();
   }
 

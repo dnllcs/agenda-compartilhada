@@ -7,7 +7,11 @@ class User {
   String password;
   String? status;
 
-  User(this.name, this.email, this.password) {
+  User(
+      {required this.name,
+      required this.email,
+      required this.password,
+      this.status}) {
     this.status = 'A';
     validateFields();
   }
@@ -19,8 +23,9 @@ class User {
   }
 
   validateName() {
-    if (name.length > 255)
+    if (name.length > 255) {
       throw Exception("O tamanho do name não pode ser maior que 255");
+    }
   }
 
   validateEmail() {

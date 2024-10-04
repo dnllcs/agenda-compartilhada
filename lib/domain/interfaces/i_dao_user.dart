@@ -1,6 +1,6 @@
 import 'package:agenda_compartilhada/domain/dto/dto_user.dart';
 
-abstract class IDaoUser {
+abstract class IDAOUser {
   Future<DTOUser> salvar(DTOUser dto);
   Future<DTOUser> alterar(DTOUser dto);
   Future<bool> alterarStatus(int id);

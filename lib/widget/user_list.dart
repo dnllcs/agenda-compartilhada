@@ -4,6 +4,8 @@ import 'package:agenda_compartilhada/rotas.dart';
 import 'package:flutter/material.dart';
 
 class UserList extends StatelessWidget {
+  late DAOUser dao = new DAOUser();
+
   Widget criarBotao(BuildContext context, String text, String rota) {
     return TextButton(
         onPressed: () => Navigator.pushNamed(context, rota), child: Text(text));
@@ -16,7 +18,7 @@ class UserList extends StatelessWidget {
         title: Text('User List'),
       ),
       body: FutureBuilder(
-          future: new DAOUser().consultar(),
+          future: dao.consultar(),
           builder: (context, AsyncSnapshot<List<DTOUser>> snapshot) {
             var dados = snapshot.data;
             if (dados == null) {

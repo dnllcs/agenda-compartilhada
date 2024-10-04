@@ -5,8 +5,14 @@ class Event {
   DateTime date;
   DateTime createdAt = DateTime.now();
   String visibility;
+  int idUser;
 
-  Event(this.location, this.description, this.date, this.visibility) {
+  Event(
+      {required this.location,
+      this.description,
+      required this.date,
+      required this.visibility,
+      required this.idUser}) {
     validateDate();
   }
 
