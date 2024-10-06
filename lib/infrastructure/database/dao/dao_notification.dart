@@ -2,9 +2,11 @@ import 'package:agenda_compartilhada/domain/interfaces/i_dao_notification.dart';
 import 'package:agenda_compartilhada/infrastructure/database/helper/connection.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:agenda_compartilhada/domain/dto/dto_notification.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class DAONotification implements IDAONotification {
   late Database _db;
+  final DatabaseReference databaseRef = FirebaseDatabase.instance.ref().child('notifications');
 
   final sqlInserir = '''
     INSERT INTO notification (type, title, content)
@@ -30,6 +32,7 @@ class DAONotification implements IDAONotification {
     int id =
         await _db.rawInsert(sqlInserir, [dto.type, dto.title, dto.content]);
     dto.id = id;
+    syncLocalToRemote();
     return dto;
   }
 
@@ -37,6 +40,7 @@ class DAONotification implements IDAONotification {
   Future<DTONotification> alterar(DTONotification dto) async {
     _db = await Connection.openDb();
     await _db.rawUpdate(sqlAlterar, [dto.type, dto.title, dto.content, dto.id]);
+    syncLocalToRemote();
     return dto;
   }
 
@@ -66,4 +70,16 @@ class DAONotification implements IDAONotification {
     });
     return notifications;
   }
+
+  Future<void> syncLocalToRemote() async {
+  _db = await Connection.openDb();
+  List<DTONotification> localNotifications = await consultar();
+  for (var notification in localNotifications) {
+    await databaseRef.child(notification.id.toString()).set({
+      'type': notification.type,
+      'title': notification.title,
+      'content': notification.content,
+    });
+  }
+}
 }

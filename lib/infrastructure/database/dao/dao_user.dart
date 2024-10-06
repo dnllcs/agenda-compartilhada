@@ -2,9 +2,11 @@ import 'package:agenda_compartilhada/domain/interfaces/i_dao_user.dart';
 import 'package:agenda_compartilhada/infrastructure/database/helper/connection.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:agenda_compartilhada/domain/dto/dto_user.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class DAOUser implements IDAOUser {
   late Database _db;
+  final DatabaseReference databaseRef = FirebaseDatabase.instance.ref().child('users');
 
   final sqlInserir = '''
     INSERT INTO user (name, email, password, status)
@@ -35,6 +37,7 @@ class DAOUser implements IDAOUser {
     int id = await _db
         .rawInsert(sqlInserir, [dto.name, dto.email, dto.password, dto.status]);
     dto.id = id;
+    syncLocalToRemote();
     return dto;
   }
 
@@ -42,6 +45,7 @@ class DAOUser implements IDAOUser {
   Future<bool> alterarStatus(int id) async {
     _db = await Connection.openDb();
     await _db.rawUpdate(sqlAlterarStatus, [id]);
+    syncLocalToRemote();
     return true;
   }
 
@@ -50,6 +54,7 @@ class DAOUser implements IDAOUser {
     _db = await Connection.openDb();
     await _db.rawUpdate(
         sqlAlterar, [dto.name, dto.email, dto.password, dto.status, dto.id]);
+    syncLocalToRemote();
     return dto;
   }
 
@@ -80,5 +85,18 @@ class DAOUser implements IDAOUser {
           status: linha['status'].toString());
     });
     return users;
+  }
+    Future<void> syncLocalToRemote() async {
+    _db = await Connection.openDb();
+    List<DTOUser> localUsers = await consultar();
+
+    for (var user in localUsers) {
+      await databaseRef.child(user.id.toString()).set({
+        'name': user.name,
+        'email': user.email,
+        'password': user.password,  
+        'status': user.status,
+      });
+    }
   }
 }
