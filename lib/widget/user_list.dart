@@ -1,10 +1,11 @@
 import 'package:agenda_compartilhada/domain/dto/dto_user.dart';
 import 'package:agenda_compartilhada/infrastructure/database/dao/dao_user.dart';
-import 'package:agenda_compartilhada/rotas.dart';
 import 'package:flutter/material.dart';
 
 class UserList extends StatelessWidget {
-  late DAOUser dao = new DAOUser();
+  late DAOUser dao = DAOUser();
+
+  UserList({super.key});
 
   Widget criarBotao(BuildContext context, String text, String rota) {
     return TextButton(
@@ -15,19 +16,19 @@ class UserList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('User List'),
+        title: const Text('User List'),
       ),
       body: FutureBuilder(
           future: dao.consultar(),
           builder: (context, AsyncSnapshot<List<DTOUser>> snapshot) {
             var dados = snapshot.data;
             if (dados == null) {
-              return Text('Dados não encontrados');
+              return const Text('Dados não encontrados');
             }
             List<DTOUser> lista = dados;
             return ListView.builder(
               itemBuilder: (context, index) => ListTile(
-                leading: Icon(Icons.person),
+                leading: const Icon(Icons.person),
                 title: Text(lista[index].name),
                 subtitle: Text(lista[index].email),
               ),

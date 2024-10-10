@@ -1,7 +1,6 @@
-import 'package:agenda_compartilhada/domain/user.dart';
 
 class Message {
-  dynamic? id;
+  dynamic id;
   String type;
   String body;
   bool read;

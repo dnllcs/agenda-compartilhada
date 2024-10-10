@@ -15,8 +15,8 @@ class MeuApp extends StatelessWidget {
         theme: ThemeData(primarySwatch: Colors.blue),
         routes: {
           Rotas.home: (context) => UserList(),
-          Rotas.form: (context) => UserForm(),
-          Rotas.details: (contexto) => UserDetails()
+          Rotas.form: (context) => const UserForm(),
+          Rotas.details: (contexto) => const UserDetails()
         });
   }
 }

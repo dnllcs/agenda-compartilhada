@@ -2,6 +2,8 @@ import 'package:agenda_compartilhada/rotas.dart';
 import 'package:flutter/material.dart';
 
 class UserDetails extends StatelessWidget {
+  const UserDetails({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -9,10 +11,10 @@ class UserDetails extends StatelessWidget {
       children: [
         TextButton(
             onPressed: () => Navigator.pushNamed(context, Rotas.details),
-            child: Text('Details')),
+            child: const Text('Details')),
         TextButton(
             onPressed: () => Navigator.pushNamed(context, Rotas.form),
-            child: Text('Form'))
+            child: const Text('Form'))
       ],
     ));
   }

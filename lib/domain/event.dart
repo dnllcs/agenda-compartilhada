@@ -1,5 +1,5 @@
 class Event {
-  dynamic? id;
+  dynamic id;
   String location;
   String? description;
   DateTime date;

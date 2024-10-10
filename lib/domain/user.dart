@@ -1,7 +1,6 @@
-import 'package:agenda_compartilhada/domain/dto/dto_user.dart';
 
 class User {
-  dynamic? id;
+  dynamic id;
   String name;
   String email;
   String password;
@@ -12,7 +11,7 @@ class User {
       required this.email,
       required this.password,
       this.status}) {
-    this.status = 'A';
+    status = 'A';
     validateFields();
   }
 

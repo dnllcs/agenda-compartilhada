@@ -1,7 +1,6 @@
-import 'package:agenda_compartilhada/domain/user.dart';
 
 class Notification {
-  dynamic? id;
+  dynamic id;
   String type;
   String title;
   String content;

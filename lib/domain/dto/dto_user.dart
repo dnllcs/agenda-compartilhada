@@ -1,5 +1,5 @@
 class DTOUser {
-  dynamic? id;
+  dynamic id;
   final String name;
   final String email;
   final String status;
