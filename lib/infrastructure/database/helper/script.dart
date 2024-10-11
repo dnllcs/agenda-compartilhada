@@ -45,6 +45,9 @@ const createTables = [
 const userInserts = [
   'INSERT INTO user (name, email, password, status) VALUES ("Daniels", "Danielsemail", "Danielspassword", "S");',
   'INSERT INTO user (name, email, password, status) VALUES ("Daniels2", "Daniels2email", "Daniels2password", "S");',
+  'INSERT INTO user (name, email, password, status) VALUES ("Daniels3", "Daniels3email", "Daniels3password", "S");',
+  'INSERT INTO user (name, email, password, status) VALUES ("Daniels3", "Daniels3email", "Daniels3password", "S");',
+  'INSERT INTO user (name, email, password, status) VALUES ("Daniels3", "Daniels3email", "Daniels3password", "S");',
   'INSERT INTO user (name, email, password, status) VALUES ("Daniels3", "Daniels3email", "Daniels3password", "S");'
 ];
 const eventInserts = [

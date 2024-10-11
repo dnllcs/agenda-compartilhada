@@ -1,17 +1,19 @@
+import 'package:agenda_compartilhada/domain/dto/dto_notification.dart';
+import 'package:agenda_compartilhada/domain/dto/dto_user.dart';
 import 'package:agenda_compartilhada/domain/user.dart';
 
 class Notification {
   dynamic? id;
-  String type;
-  String title;
-  String content;
-  int idUser;
+  late String type;
+  late String title;
+  late String content;
+  late User user;
 
-  Notification(
-      {required this.type,
-      required this.title,
-      required this.content,
-      required this.idUser}) {
+  Notification({required DTONotification dto}) {
+    type = dto.type;
+    title = dto.title;
+    content = dto.content;
+    user = User(dto: dto.dtoUser);
     validateFields();
   }
 

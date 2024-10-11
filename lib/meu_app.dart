@@ -8,9 +8,8 @@ class MeuApp extends StatelessWidget {
   const MeuApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return MaterialApp(
-        title: 'gestao de notas',
+        title: 'Agenda Compartilhada',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(primarySwatch: Colors.blue),
         routes: {

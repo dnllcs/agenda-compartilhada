@@ -29,11 +29,15 @@ class UserList extends StatelessWidget {
               itemBuilder: (context, index) => ListTile(
                 leading: Icon(Icons.person),
                 title: Text(lista[index].name),
-                subtitle: Text(lista[index].email),
               ),
               itemCount: lista.length,
             );
           }),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.pushNamed(context, Rotas.form),
+        child: Icon(Icons.add),
+        tooltip: 'Adicionar Usuário',
+      ),
     );
 
     //   return Container(
