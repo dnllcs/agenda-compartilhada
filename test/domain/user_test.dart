@@ -1,3 +1,4 @@
+import 'package:agenda_compartilhada/domain/dto/dto_user.dart';
 import 'package:agenda_compartilhada/domain/user.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -6,36 +7,40 @@ void main() {
     test('Name validation error', () {
       expect(
           () => User(
-              name: 'a' * 256,
-              email: 'valid@example.com',
-              password: 'validPass123'),
+              dto: DTOUser(
+                  name: 'nome' * 100,
+                  email: 'valid@example.com',
+                  password: 'validPass123')),
           throwsException);
     });
 
     test('Email validation', () {
       expect(
           () => User(
-              name: 'valido',
-              email: 'valid@example.com' * 256,
-              password: 'validPass123'),
+              dto: DTOUser(
+                  name: 'nome' * 100,
+                  email: 'erradoexample.com',
+                  password: 'validPass123')),
           throwsException);
     });
 
     test('Password validation', () {
       expect(
           () => User(
-              name: 'valido',
-              email: 'valid@example.com',
-              password: 'validPass123' * 256),
+              dto: DTOUser(
+                  name: 'nome',
+                  email: 'valid@example.com',
+                  password: 'validPass123' * 100)),
           throwsException);
     });
 
     test('Valid User creation', () {
       expect(
           () => User(
-              name: 'valido',
-              email: 'valid@example.com',
-              password: 'validPass123'),
+              dto: DTOUser(
+                  name: 'nome',
+                  email: 'valid@example.com',
+                  password: 'validPass123' * 100)),
           returnsNormally);
     });
   });

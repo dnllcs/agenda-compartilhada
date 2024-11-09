@@ -1,16 +1,16 @@
 
 class User {
-  dynamic id;
-  String name;
-  String email;
-  String password;
+  dynamic? id;
+  late String name;
+  late String email;
+  late String password;
   String? status;
 
-  User(
-      {required this.name,
-      required this.email,
-      required this.password,
-      this.status}) {
+  User({required DTOUser dto}) {
+    id = dto.id;
+    name = dto.name;
+    email = dto.email;
+    password = dto.password;
     status = 'A';
     validateFields();
   }

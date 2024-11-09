@@ -1,4 +1,5 @@
 import 'package:agenda_compartilhada/domain/interfaces/i_dao_notification.dart';
+import 'package:agenda_compartilhada/infrastructure/database/dao/dao_user.dart';
 import 'package:agenda_compartilhada/infrastructure/database/helper/connection.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:agenda_compartilhada/domain/dto/dto_notification.dart';
@@ -7,6 +8,7 @@ import 'package:firebase_database/firebase_database.dart';
 class DAONotification implements IDAONotification {
   late Database _db;
   final DatabaseReference databaseRef = FirebaseDatabase.instance.ref().child('notifications');
+  late final daoUser = DAOUser();
 
   final sqlInserir = '''
     INSERT INTO notification (type, title, content)
@@ -48,11 +50,16 @@ class DAONotification implements IDAONotification {
   Future<DTONotification> consultarPorId(int id) async {
     _db = await Connection.openDb();
     var resultado = (await _db.rawQuery(sqlConsultarPorId, [id])).first;
+
+    var user = await daoUser
+        .consultarPorId(int.parse(resultado['user_id'].toString()));
+
     DTONotification notification = DTONotification(
         id: resultado['id'],
         type: resultado['type'].toString(),
         title: resultado['title'].toString(),
-        content: resultado['content'].toString());
+        content: resultado['content'].toString(),
+        dtoUser: user);
     return notification;
   }
 
@@ -60,14 +67,20 @@ class DAONotification implements IDAONotification {
   Future<List<DTONotification>> consultar() async {
     _db = await Connection.openDb();
     var resultado = await _db.rawQuery(sqlConsultar);
-    List<DTONotification> notifications = List.generate(resultado.length, (i) {
-      var linha = resultado[i];
-      return DTONotification(
-          id: linha['id'],
-          type: linha['type'].toString(),
-          title: linha['title'].toString(),
-          content: linha['content'].toString());
-    });
+
+    List<DTONotification> notifications = List.generate(
+        resultado.length,
+        (i) async {
+          var linha = resultado[i];
+          var user = await daoUser
+              .consultarPorId(int.parse(linha['user_id'].toString()));
+          return DTONotification(
+              id: linha['id'],
+              type: linha['type'].toString(),
+              title: linha['title'].toString(),
+              content: linha['content'].toString(),
+              dtoUser: user);
+        } as DTONotification Function(int index));
     return notifications;
   }
 

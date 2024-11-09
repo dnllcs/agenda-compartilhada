@@ -7,6 +7,7 @@ import 'package:firebase_database/firebase_database.dart';
 class DAOUser implements IDAOUser {
   late Database _db;
   final DatabaseReference databaseRef = FirebaseDatabase.instance.ref().child('users');
+  static late DAOUser dao;
 
   final sqlInserir = '''
     INSERT INTO user (name, email, password, status)
@@ -35,7 +36,7 @@ class DAOUser implements IDAOUser {
   Future<DTOUser> salvar(DTOUser dto) async {
     _db = await Connection.openDb();
     int id = await _db
-        .rawInsert(sqlInserir, [dto.name, dto.email, dto.password, dto.status]);
+        .rawInsert(sqlInserir, [dto.name, dto.email, dto.password, 'A']);
     dto.id = id;
     syncLocalToRemote();
     return dto;
