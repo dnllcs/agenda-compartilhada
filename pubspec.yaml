@@ -46,6 +46,7 @@ dev_dependencies:
   sqflite: ^2.3.3+1
   path: ^1.9.0
   sqflite_common_ffi: ^2.3.3
+  syncfusion_flutter_calendar: ^27.1.58
 
 
   # The "flutter_lints" package below contains a set of recommended lints to

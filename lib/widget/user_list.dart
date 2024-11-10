@@ -1,5 +1,6 @@
 import 'package:agenda_compartilhada/domain/dto/dto_user.dart';
 import 'package:agenda_compartilhada/infrastructure/database/dao/dao_user.dart';
+import 'package:agenda_compartilhada/rotas.dart';
 import 'package:flutter/material.dart';
 
 class UserList extends StatelessWidget {

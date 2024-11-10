@@ -1,4 +1,6 @@
 
+import 'package:agenda_compartilhada/domain/dto/dto_user.dart';
+
 class User {
   dynamic? id;
   late String name;
