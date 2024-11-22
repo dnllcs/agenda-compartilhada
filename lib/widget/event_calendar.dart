@@ -1,5 +1,10 @@
+import 'package:agenda_compartilhada/domain/event.dart';
+import 'package:agenda_compartilhada/infrastructure/event_datasource.dart';
+import 'package:agenda_compartilhada/widget/event_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:intl/intl.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class EventCalendar extends StatefulWidget {
   @override
@@ -7,58 +12,91 @@ class EventCalendar extends StatefulWidget {
 }
 
 class _EventCalendarState extends State<EventCalendar> {
-  List<Appointment> _appointments = [];
+  List<Event> _events = [];
   DateTime? _selectedDate;
+  String title = '';
+  DateTime? startDate;
+  String? location;
+  String? visibility;
+  int userId = 1;
+
+  _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: startDate ?? DateTime.now(),
+      firstDate: DateTime(DateTime.now().year),
+      lastDate: DateTime(DateTime.now().year + 1),
+    );
+    if (picked != null && picked != startDate) {
+      setState(() {
+        startDate = picked;
+      });
+    }
+  }
 
   void _addEvent() {
     showDialog(
       context: context,
       builder: (context) {
-        String title = '';
-        DateTime? startDate;
-        DateTime? endDate;
-
         return AlertDialog(
-          title: Text('Add Event'),
+          title: const Text('Adicionar um Evento'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
-                decoration: InputDecoration(labelText: 'Title'),
+                decoration: const InputDecoration(labelText: 'Nome do Evento'),
                 onChanged: (value) => title = value,
               ),
-              TextField(
-                decoration: InputDecoration(labelText: 'Start Date (yyyy-mm-dd)'),
-                onChanged: (value) => startDate = DateTime.tryParse(value),
+              ElevatedButton(
+                onPressed: () => _selectDate(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.greenAccent,
+                  foregroundColor: Colors.white,
+                ),
+                child: Text(
+                  startDate == null
+                      ? 'Selecionar a Data'
+                      : 'Data Selecionada: ${DateFormat('dd/MM/yyyy').format(startDate!)}',
+                  style: const TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.bold),
+                ),
               ),
               TextField(
-                decoration: InputDecoration(labelText: 'End Date (yyyy-mm-dd)'),
-                onChanged: (value) => endDate = DateTime.tryParse(value),
+                decoration: const InputDecoration(labelText: 'Local'),
+                onChanged: (value) => location = value,
+              ),
+              TextField(
+                decoration: const InputDecoration(labelText: 'Visibilidade'),
+                onChanged: (value) => visibility = value,
               ),
             ],
           ),
           actions: [
             TextButton(
               onPressed: () {
-                if (title.isNotEmpty && startDate != null && endDate != null) {
+                if (title.isNotEmpty &&
+                    startDate != null &&
+                    location != null &&
+                    visibility != null) {
                   setState(() {
-                    _appointments.add(
-                      Appointment(
-                        subject: title,
-                        startTime: startDate!,
-                        endTime: endDate!,
-                        color: Colors.blue,
+                    _events.add(
+                      Event(
+                        location: location!,
+                        description: title,
+                        date: startDate!,
+                        visibility: visibility!,
+                        idUser: userId,
                       ),
                     );
                   });
                   Navigator.of(context).pop();
                 }
               },
-              child: Text('Add'),
+              child: const Text('Adicionar'),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel'),
+              child: const Text('Cancelar'),
             ),
           ],
         );
@@ -72,25 +110,38 @@ class _EventCalendarState extends State<EventCalendar> {
     });
 
     if (_selectedDate != null) {
-      final eventsForSelectedDate = _appointments.where((appointment) {
-        return appointment.startTime.year == _selectedDate!.year &&
-               appointment.startTime.month == _selectedDate!.month &&
-               appointment.startTime.day == _selectedDate!.day;
+      final eventsForSelectedDate = _events.where((event) {
+        return event.date.year == _selectedDate!.year &&
+            event.date.month == _selectedDate!.month &&
+            event.date.day == _selectedDate!.day;
       }).toList();
 
       if (eventsForSelectedDate.isNotEmpty) {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text('Events on ${_selectedDate!.toLocal().toString().split(' ')[0]}'),
+            title: Text(
+                'Eventos em ${DateFormat('dd-MM-yyyy').format(_selectedDate!)}'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
-              children: eventsForSelectedDate.map((event) => Text(event.subject)).toList(),
+              children: eventsForSelectedDate.map((event) {
+                return ListTile(
+                  title: Text(event.description ?? 'Sem descrição'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EventDetailPage(event: event),
+                      ),
+                    );
+                  },
+                );
+              }).toList(),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: Text('Close'),
+                child: Text('Fechar'),
               ),
             ],
           ),
@@ -103,7 +154,7 @@ class _EventCalendarState extends State<EventCalendar> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Calendar'),
+        title: Text('Calendário de Eventos'),
         actions: [
           IconButton(
             icon: Icon(Icons.add),
@@ -113,15 +164,9 @@ class _EventCalendarState extends State<EventCalendar> {
       ),
       body: SfCalendar(
         view: CalendarView.month,
-        dataSource: EventDataSource(_appointments),
+        dataSource: EventDataSource(_events),
         onTap: _onCalendarTapped,
       ),
     );
-  }
-}
-
-class EventDataSource extends CalendarDataSource {
-  EventDataSource(List<Appointment> appointments) {
-    this.appointments = appointments;
   }
 }

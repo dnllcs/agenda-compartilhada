@@ -2,11 +2,9 @@ import 'package:agenda_compartilhada/domain/interfaces/i_dao_message.dart';
 import 'package:agenda_compartilhada/infrastructure/database/helper/connection.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:agenda_compartilhada/domain/dto/dto_message.dart';
-import 'package:firebase_database/firebase_database.dart';
 
 class DAOMessage implements IDAOMessage {
   late Database _db;
-  final DatabaseReference databaseRef = FirebaseDatabase.instance.ref().child('messages');
 
   final sqlInserir = '''
     INSERT INTO message (type, body, read)
@@ -32,7 +30,6 @@ class DAOMessage implements IDAOMessage {
     int id =
         await _db.rawInsert(sqlInserir, [dto.type, dto.body, dto.read ? 1 : 0]);
     dto.id = id;
-    syncLocalToRemote();
     return dto;
   }
 
@@ -41,7 +38,7 @@ class DAOMessage implements IDAOMessage {
     _db = await Connection.openDb();
     await _db
         .rawUpdate(sqlAlterar, [dto.type, dto.body, dto.read ? 1 : 0, dto.id]);
-    syncLocalToRemote();
+
     return dto;
   }
 
@@ -71,23 +68,10 @@ class DAOMessage implements IDAOMessage {
     });
     return messages;
   }
-  
+
   @override
   Future<bool> alterarReadStatus(int id) {
     // TODO: implement alterarReadStatus
     throw UnimplementedError();
-  }
-
-  Future<void> syncLocalToRemote() async {
-    _db = await Connection.openDb();
-    List<DTOMessage> localMessages = await consultar();
-
-    for (var message in localMessages) {
-      await databaseRef.child(message.id.toString()).set({
-        'type': message.type,
-        'body': message.body,
-        'read': message.read,
-      });
-    }
   }
 }

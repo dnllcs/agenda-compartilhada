@@ -2,11 +2,9 @@ import 'package:agenda_compartilhada/domain/interfaces/i_dao_event.dart';
 import 'package:agenda_compartilhada/infrastructure/database/helper/connection.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:agenda_compartilhada/domain/dto/dto_event.dart';
-import 'package:firebase_database/firebase_database.dart';
 
 class DAOEvent implements IDAOEvent {
   late Database _db;
-  final DatabaseReference databaseRef = FirebaseDatabase.instance.ref('events');
 
   final sqlInserir = '''
     INSERT INTO event (location, description, date, createdAt, visibility)
@@ -26,20 +24,6 @@ class DAOEvent implements IDAOEvent {
     SELECT * FROM event;
   ''';
 
-  Future<void> syncLocalToRemote() async {
-    _db = await Connection.openDb();
-    List<DTOEvent> localEvents = await consultar();
-    for (var event in localEvents) {
-      await databaseRef.child(event.id.toString()).set({
-        'location': event.location,
-        'description': event.description,
-        'date': event.date.toIso8601String(),
-        'createdAt': event.createdAt.toIso8601String(),
-        'visibility': event.visibility,
-      });
-    }
-  }
-
   @override
   Future<DTOEvent> salvar(DTOEvent dto) async {
     _db = await Connection.openDb();
@@ -51,7 +35,6 @@ class DAOEvent implements IDAOEvent {
       dto.visibility
     ]);
     dto.id = id;
-    syncLocalToRemote();
     return dto;
   }
 
@@ -66,7 +49,6 @@ class DAOEvent implements IDAOEvent {
       dto.visibility,
       dto.id
     ]);
-    syncLocalToRemote();
     return dto;
   }
 

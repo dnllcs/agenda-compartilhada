@@ -41,12 +41,12 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  firebase_database: ^11.1.4
   cupertino_icons: ^1.0.2
   sqflite: ^2.3.3+1
   path: ^1.9.0
   sqflite_common_ffi: ^2.3.3
   syncfusion_flutter_calendar: ^27.1.58
+  syncfusion_flutter_datepicker: ^27.2.2
 
 
   # The "flutter_lints" package below contains a set of recommended lints to
