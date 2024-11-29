@@ -34,6 +34,24 @@ class _EventCalendarState extends State<EventCalendar> {
     }
   }
 
+  _newEvent() {
+    setState(() {
+      _events.add(
+        Event(
+          location: location!,
+          description: title,
+          date: startDate!,
+          visibility: visibility!,
+          idUser: userId,
+        ),
+      );
+      location = '';
+      title = '';
+      startDate = null;
+      visibility = '';
+    });
+  }
+
   void _addEvent({DateTime? currentDate}) {
     startDate = currentDate;
     showDialog(
@@ -93,7 +111,6 @@ class _EventCalendarState extends State<EventCalendar> {
                     title = '';
                     startDate = null;
                     visibility = '';
-
                   });
                   Navigator.of(context).pop();
                 }
@@ -110,85 +127,87 @@ class _EventCalendarState extends State<EventCalendar> {
     );
   }
 
-void _onCalendarTapped(CalendarTapDetails details) {
-  if (details.targetElement == CalendarElement.calendarCell) {
+  void _onCalendarTapped(CalendarLongPressDetails details) {
     final DateTime selectedDate = details.date!;
-    final List<Event> eventsForSelectedDate = _events
-        .where((event) =>
-            DateFormat('yyyy-MM-dd').format(event.date) ==
-            DateFormat('yyyy-MM-dd').format(selectedDate))
-        .toList();
+    if (details.targetElement == CalendarElement.calendarCell) {
+      final List<Event> eventsForSelectedDate = _events
+          .where((event) =>
+              DateFormat('yyyy-MM-dd').format(event.date) ==
+              DateFormat('yyyy-MM-dd').format(selectedDate))
+          .toList();
 
-    if (eventsForSelectedDate.isNotEmpty) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Row(
-            children: [
-              const Icon(Icons.event, color: Colors.blue),
-              const SizedBox(width: 8),
-              Text(
-                'Eventos em ${DateFormat('dd-MM-yyyy').format(selectedDate)}',
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      if (eventsForSelectedDate.isNotEmpty) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Row(
+              children: [
+                const Icon(Icons.event, color: Colors.blue),
+                const SizedBox(width: 8),
+                Text(
+                  'Eventos em ${DateFormat('dd-MM-yyyy').format(selectedDate)}',
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            content: SizedBox(
+              height: 200,
+              width: double.maxFinite,
+              child: ListView.builder(
+                itemCount: eventsForSelectedDate.length,
+                itemBuilder: (context, index) {
+                  final event = eventsForSelectedDate[index];
+                  return Card(
+                    elevation: 4,
+                    margin: const EdgeInsets.symmetric(vertical: 6),
+                    child: ListTile(
+                      leading: const Icon(Icons.event_note, color: Colors.blue),
+                      title: Text(
+                        event.description ?? 'Sem descrição',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EventDetailPage(event: event),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+            actions: [
+              TextButton.icon(
+                onPressed: () => {
+                  _addEvent(currentDate: selectedDate),
+                },
+                icon: const Icon(Icons.add, color: Colors.green),
+                label: const Text(
+                  'Adicionar Evento',
+                  style: TextStyle(color: Colors.green),
+                ),
+              ),
+              TextButton.icon(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: const Icon(Icons.close, color: Colors.red),
+                label: const Text(
+                  'Fechar',
+                  style: TextStyle(color: Colors.red),
+                ),
               ),
             ],
           ),
-          content: SizedBox(
-            height: 200,
-            width: double.maxFinite,
-            child: ListView.builder(
-              itemCount: eventsForSelectedDate.length,
-              itemBuilder: (context, index) {
-                final event = eventsForSelectedDate[index];
-                return Card(
-                  elevation: 4,
-                  margin: const EdgeInsets.symmetric(vertical: 6),
-                  child: ListTile(
-                    leading: const Icon(Icons.event_note, color: Colors.blue),
-                    title: Text(
-                      event.description ?? 'Sem descrição',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EventDetailPage(event: event),
-                        ),
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
-          ),
-          actions: [
-            TextButton.icon(
-              onPressed: () => _addEvent(currentDate: selectedDate),
-              icon: const Icon(Icons.add, color: Colors.green),
-              label: const Text(
-                'Adicionar Evento',
-                style: TextStyle(color: Colors.green),
-              ),
-            ),
-            TextButton.icon(
-              onPressed: () => Navigator.of(context).pop(),
-              icon: const Icon(Icons.close, color: Colors.red),
-              label: const Text(
-                'Fechar',
-                style: TextStyle(color: Colors.red),
-              ),
-            ),
-          ],
-        ),
-      );
-    } else {
-      _addEvent(currentDate: selectedDate);
+        );
+      } else {
+        _addEvent(currentDate: selectedDate);
+      }
     }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -203,12 +222,10 @@ void _onCalendarTapped(CalendarTapDetails details) {
           ),
         ],
       ),
-      
       body: SfCalendar(
-        
         view: CalendarView.month,
         dataSource: EventDataSource(_events),
-        onTap: _onCalendarTapped,
+        onLongPress: _onCalendarTapped,
         backgroundColor: Colors.white,
         todayHighlightColor: Colors.blue,
       ),

@@ -12,38 +12,45 @@ class EventDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Detalhes do Evento'),
+        backgroundColor: Colors.blue,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: ListView(
                 children: [
-                  Text(
-                    'Local: ${event.location}',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  _buildDetailCard(
+                    context,
+                    icon: Icons.description,
+                    title: 'Descrição',
+                    content: event.description ?? 'Não há descrição disponível',
                   ),
-                  const SizedBox(height: 10),
-                  Text(
-                    'Date: ${DateFormat('dd-MM-yyyy HH:mm').format(event.date)}',
-                    style: const TextStyle(fontSize: 16),
+                  _buildDetailCard(
+                    context,
+                    icon: Icons.location_on,
+                    title: 'Local',
+                    content: event.location,
                   ),
-                  const SizedBox(height: 10),
-                  Text(
-                    'Description: ${event.description ?? 'Não há descrição disponível'}',
-                    style: const TextStyle(fontSize: 16),
+                  _buildDetailCard(
+                    context,
+                    icon: Icons.calendar_today,
+                    title: 'Data',
+                    content: DateFormat('dd-MM-yyyy HH:mm').format(event.date),
                   ),
-                  const SizedBox(height: 10),
-                  Text(
-                    'Visibility: ${event.visibility}',
-                    style: const TextStyle(fontSize: 16),
+                  _buildDetailCard(
+                    context,
+                    icon: Icons.visibility,
+                    title: 'Visibilidade',
+                    content: event.visibility,
                   ),
-                  const SizedBox(height: 10),
-                  Text(
-                    'Criado em: ${DateFormat('dd-MM-yyyy HH:mm').format(event.createdAt)}',
-                    style: const TextStyle(fontSize: 16),
+                  _buildDetailCard(
+                    context,
+                    icon: Icons.access_time,
+                    title: 'Criado em',
+                    content:
+                        DateFormat('dd-MM-yyyy HH:mm').format(event.createdAt),
                   ),
                 ],
               ),
@@ -56,14 +63,14 @@ class EventDetailPage extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
                     foregroundColor: Colors.white,
-                    shadowColor: Colors.greenAccent,
                     elevation: 5,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                   onPressed: () {
-                    _showFeedbackDialog(context, 'Você topou participar deste evento!');
+                    _showFeedbackDialog(
+                        context, 'Você topou participar deste evento!');
                   },
                   child: const Text('Topa', style: TextStyle(fontSize: 16)),
                 ),
@@ -71,14 +78,14 @@ class EventDetailPage extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,
-                    shadowColor: Colors.redAccent,
                     elevation: 5,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                   onPressed: () {
-                    _showFeedbackDialog(context, 'Você não topou participar deste evento.');
+                    _showFeedbackDialog(
+                        context, 'Você não topou participar deste evento.');
                   },
                   child: const Text('Não Topa', style: TextStyle(fontSize: 16)),
                 ),
@@ -91,19 +98,66 @@ class EventDetailPage extends StatelessWidget {
     );
   }
 
+  Widget _buildDetailCard(BuildContext context,
+      {required IconData icon,
+      required String title,
+      required String content}) {
+    return Card(
+      elevation: 3,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, color: Colors.blue, size: 28),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    content,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _showFeedbackDialog(BuildContext context, String message) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Obrigado!'),
+          title:
+              Text('Obrigado!', style: TextStyle(fontWeight: FontWeight.bold)),
           content: Text(message),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Fechar'),
+              child: const Text('Fechar'),
             ),
           ],
         );
